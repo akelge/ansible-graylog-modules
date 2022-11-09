@@ -307,7 +307,8 @@ def create(module, base_url, headers, creation_date):
     response, info = fetch_url(module=module, url=url, headers=json.loads(headers), method='POST', data=module.jsonify(payload))
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        body = info.pop('body', '')
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str('body')))
 
     try:
         content = to_text(response.read(), errors='surrogate_or_strict')
@@ -424,7 +425,8 @@ def get_token(module, endpoint, username, password):
     response, info = fetch_url(module=module, url=url, headers=json.loads(headers), method='POST', data=module.jsonify(payload))
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        body = info.pop('body', '')
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str('body')))
 
     try:
         content = to_text(response.read(), errors='surrogate_or_strict')
@@ -521,3 +523,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

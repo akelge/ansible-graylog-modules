@@ -43,7 +43,7 @@ options:
       - Allow untrusted certificate
     required: false
     default: false
-    type: bool          
+    type: bool
   action:
     description:
       - Action to take against role API.
@@ -256,7 +256,7 @@ def get_token(module, endpoint, username, password):
     response, info = fetch_url(module=module, url=url, headers=json.loads(headers), method='POST', data=module.jsonify(payload))
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info.get('body', ''))))
 
     try:
         content = to_text(response.read(), errors='surrogate_or_strict')

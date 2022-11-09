@@ -37,13 +37,13 @@ options:
       - Allow non HTTPS connexion
     required: false
     default: false
-    type: bool    
+    type: bool
   validate_certs:
     description:
       - Allow untrusted certificate
     required: false
     default: false
-    type: bool      
+    type: bool
   action:
     description:
       - Action to take against stream API.
@@ -356,11 +356,13 @@ def create(module, base_url, headers, index_set_id):
     response, info = fetch_url(module=module, url=url, headers=json.loads(headers), method='POST', data=module.jsonify(payload))
 
     if info['status'] != 201:
-        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        body = info.pop('body', '')
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(body)))
 
     try:
         content = to_text(response.read(), errors='surrogate_or_strict')
     except AttributeError:
+        print(info)
         content = info.pop('body', '')
 
     return info['status'], info['msg'], content, url
@@ -619,7 +621,9 @@ def default_index_set(module, endpoint, base_url, headers):
     response, info = fetch_url(module=module, url=url, headers=json.loads(headers), method='GET')
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        body = info.pop('body', 'no body')
+        # module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(body)))
 
     try:
         content = to_text(response.read(), errors='surrogate_or_strict')
